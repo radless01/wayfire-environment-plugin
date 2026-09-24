@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<wayfire>
+    <plugin name="environment">
+        <_short>Environment Variables</_short>
+        <_long>Sets environment variables from the [environment] section.</_long>
+        <category>General</category>
+    </plugin>
+</wayfire>
