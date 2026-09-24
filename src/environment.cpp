@@ -501,6 +501,45 @@ void restart_wayfire()
     core.shutdown();
 }
 
+std::string expand_variables(std::string value)
+{
+    std::size_t pos = 0;
+    while ((pos = value.find('$', pos)) != std::string::npos)
+    {
+        if (pos + 1 >= value.size())
+        {
+            break;
+        }
+
+        // Değişken adının sonunu bul (harf, rakam ve alt çizgi dahil)
+        std::size_t start = pos + 1;
+        std::size_t end = start;
+        while (end < value.size() && 
+               (std::isalnum(static_cast<unsigned char>(value[end])) || value[end] == '_'))
+        {
+            ++end;
+        }
+
+        if (end > start)
+        {
+            std::string var_name = value.substr(start, end - start);
+            const char* env_val = std::getenv(var_name.c_str());
+            std::string replacement = env_val ? env_val : "";
+
+            // $DEĞİŞKEN kısmını gerçek değeriyle değiştir
+            value.replace(pos, end - pos, replacement);
+            pos += replacement.length();
+        }
+        else
+        {
+            // Sadece tek başına bir $ varsa atla
+            pos++;
+        }
+    }
+
+    return value;
+}
+
 void apply_environment()
 {
     const std::string config_file =
@@ -583,6 +622,8 @@ void apply_environment()
             value =
                 value.substr(1, value.size() - 2);
         }
+
+        value = expand_variables(value);
 
         if (setenv(
                 key.c_str(),
