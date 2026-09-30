@@ -1,5 +1,5 @@
 project(
-    'wayfire-environment',
+    'environment',
     'cpp',
     version: '1.0.0',
     license: 'MIT',
@@ -11,7 +11,10 @@ project(
     ],
 )
 
-wayfire = dependency('wayfire', version: '>=0.11.0')
+wayfire = dependency(
+    'wayfire',
+    version: '>=0.11.0',
+)
 
 add_project_arguments(
     ['-DWLR_USE_UNSTABLE'],
@@ -28,15 +31,5 @@ add_project_link_arguments(
     language: 'cpp'
 )
 
-shared_module(
-    'environment',
-    'src/environment.cpp',
-    dependencies: [wayfire],
-    install: true,
-    install_dir: get_option('libdir') / 'wayfire',
-)
-
-install_data(
-    'metadata/environment.xml',
-    install_dir: wayfire.get_variable(pkgconfig: 'metadatadir'),
-)
+subdir('src')
+subdir('metadata')
